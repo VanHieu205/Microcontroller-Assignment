@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2023 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -27,6 +27,7 @@
 #include "fsm_traffic_light.h"
 #include "global.h"
 #include "software_timer.h"
+#include "sched.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,7 +61,25 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void toggleRed(){
+	HAL_GPIO_TogglePin(R1_GPIO_Port, R1_Pin);
+}
 
+void toggleYellow(){
+	HAL_GPIO_TogglePin(A1_GPIO_Port, A1_Pin);
+}
+
+void toggleGreen(){
+	HAL_GPIO_TogglePin(G1_GPIO_Port, G1_Pin);
+}
+
+void toggleBlue(){
+	HAL_GPIO_TogglePin(R2_GPIO_Port, R2_Pin);
+}
+
+void togglePink(){
+	HAL_GPIO_TogglePin(A2_GPIO_Port, A2_Pin);
+}
 /* USER CODE END 0 */
 
 /**
@@ -94,16 +113,23 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT (& htim2);
+  SCH_INIT();
+        SCH_Add_Task(timerRun,5,1);
+        SCH_Add_Task(getKeyInput,10,1);
+//        SCH_Add_Task(toggleRed,4,100);
+//        SCH_Add_Task(toggleYellow,3,100);
+//        SCH_Add_Task(toggleGreen,1,100);
+//        SCH_Add_Task(togglePink,2,100);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  SCH_Dispatcher();
 	  fsm_traffic_light();
   }
   /* USER CODE END 3 */
@@ -184,7 +210,7 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM2_Init 2 */
-  TIME_CYCLE = 1/(8e6/(htim2.Init.Prescaler + 1)/(htim2.Init.Period + 1)) * 1000;
+
   /* USER CODE END TIM2_Init 2 */
 
 }
@@ -241,8 +267,9 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef * htim){
-	timerRun();
-	getKeyInput();
+//	timerRun();
+//	getKeyInput();
+	SCH_Update();
 }
 /* USER CODE END 4 */
 
