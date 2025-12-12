@@ -1,0 +1,9 @@
+button.c:15:5:isButtonPressed	16	static
+button.c:23:13:buttonGenerateEvent	16	static
+button.c:27:6:getKeyInput	16	static
+button.c:75:13:forcePress	16	static
+button.c:85:13:forceRelease	16	static
+button.c:91:6:toggleButton0	8	static
+button.c:92:6:toggleButton1	8	static
+button.c:93:6:toggleButton2	8	static
+button.c:94:6:toggleButton3	8	static
