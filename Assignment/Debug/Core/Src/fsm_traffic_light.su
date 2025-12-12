@@ -1,4 +1,4 @@
-fsm_traffic_light.c:15:13:setNormalLedsForMode1	8	static
-fsm_traffic_light.c:31:13:enterManualStep	16	static
-fsm_traffic_light.c:67:6:enterManualMode	8	static
-fsm_traffic_light.c:78:6:fsm_traffic_light	8	static
+fsm_traffic_light.c:12:13:setNormalLedsForMode1	8	static
+fsm_traffic_light.c:23:13:enterManualStep	16	static
+fsm_traffic_light.c:58:6:enterManualMode	8	static
+fsm_traffic_light.c:69:6:fsm_traffic_light	8	static
