@@ -8,6 +8,7 @@
 #ifndef INC_GLOBAL_H_
 #define INC_GLOBAL_H_
 
+#include "stdint.h"
 //========================
 // SYSTEM STATES
 //========================
@@ -52,4 +53,6 @@ extern int RED;
 extern int AMBER;
 extern int GREEN;
 extern int pedestrian_request;
+
+extern uint32_t timestamp;
 #endif /* INC_GLOBAL_H_ */

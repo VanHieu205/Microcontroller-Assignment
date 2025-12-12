@@ -74,3 +74,85 @@ void getKeyInput() {
 		}
 	}
 }
+
+void toggleButton0() {
+
+	KeyReg0[0] = PRESSED_STATE;
+	    KeyReg1[0] = PRESSED_STATE;
+	    KeyReg2[0] = PRESSED_STATE;
+
+	    if (KeyReg3[0] != PRESSED_STATE) {
+	        KeyReg3[0] = PRESSED_STATE;
+	        subKeyProcess(0);
+	        TimeOutForKeyPress[0] = 2000 / TIME_CYCLE;
+	        long_flag[0] = 0;
+	    }
+
+	    KeyReg0[0] = NORMAL_STATE;
+	    KeyReg1[0] = NORMAL_STATE;
+	    KeyReg2[0] = NORMAL_STATE;
+
+	    KeyReg3[0] = NORMAL_STATE;
+}
+
+
+void toggleButton1() {
+
+	KeyReg0[1] = PRESSED_STATE;
+	    KeyReg1[1] = PRESSED_STATE;
+	    KeyReg2[1] = PRESSED_STATE;
+
+	    if (KeyReg3[1] != PRESSED_STATE) {
+	        KeyReg3[1] = PRESSED_STATE;
+	        subKeyProcess(1);
+	        TimeOutForKeyPress[1] = 2000 / TIME_CYCLE;
+	        long_flag[1] = 0;
+	    }
+
+	    KeyReg0[1] = NORMAL_STATE;
+	    KeyReg1[1] = NORMAL_STATE;
+	    KeyReg2[1] = NORMAL_STATE;
+
+	    KeyReg3[1] = NORMAL_STATE;
+}
+
+void toggleButton2() {
+
+	KeyReg0[2] = PRESSED_STATE;
+	    KeyReg1[2] = PRESSED_STATE;
+	    KeyReg2[2] = PRESSED_STATE;
+
+	    if (KeyReg3[2] != PRESSED_STATE) {
+	        KeyReg3[2] = PRESSED_STATE;
+	        subKeyProcess(2);
+	        TimeOutForKeyPress[2] = 2000 / TIME_CYCLE;
+	        long_flag[2] = 0;
+	    }
+
+	    KeyReg0[2] = NORMAL_STATE;
+	    KeyReg1[2] = NORMAL_STATE;
+	    KeyReg2[2] = NORMAL_STATE;
+
+	    KeyReg3[2] = NORMAL_STATE;
+}
+
+
+void toggleButton3() {
+
+	KeyReg0[3] = PRESSED_STATE;
+	    KeyReg1[3] = PRESSED_STATE;
+	    KeyReg2[3] = PRESSED_STATE;
+
+	    if (KeyReg3[3] != PRESSED_STATE) {
+	        KeyReg3[3] = PRESSED_STATE;
+	        subKeyProcess(3);
+	        TimeOutForKeyPress[3] = 2000 / TIME_CYCLE;
+	        long_flag[3] = 0;
+	    }
+
+	    KeyReg0[3] = NORMAL_STATE;
+	    KeyReg1[3] = NORMAL_STATE;
+	    KeyReg2[3] = NORMAL_STATE;
+
+	    KeyReg3[3] = NORMAL_STATE;
+}

@@ -1,72 +1,124 @@
 /*
  * fsm_traffic_light.c
  *
+ *  Created on: Dec 11, 2025
+ *      Author: LENOVO
  */
 
+
+#include <stdbool.h>
 #include "fsm_traffic_light.h"
 
 int status = INIT;
 int manual_step = 0;
+bool perdestrian = false;
+bool preper = false;
+int timeperdes = 3;
+int timepre = 1;
+void fsm_perdes(){
+    // Khi người dùng nhấn nút đi bộ
+    if(isButtonPressed(3)){
+        preper = true;
+        timepre = 1;
+        setTimer(4, 1000);
+    }
+    if(preper == true){
+            if(timer_flag[4] == 1){
+                timepre--;
+                if(timepre <= 0){
+                	timeperdes = 3;
+                    perdestrian = true;
+                    preper = false;
 
+                    setTimer(4, 3000);
+                }
+
+            }
+        }
+    if(perdestrian == true){
+        if(timer_flag[4] == 1){
+            timeperdes--;
+            if(timeperdes <= 0){
+            	preper = false;
+                perdestrian = false;
+                clearTimer(4);
+            }
+
+        }
+    }
+}
+void setRed1() {
+    HAL_GPIO_WritePin(BIT1_GPIO_Port, BIT1_Pin, SET);
+    HAL_GPIO_WritePin(BIT2_GPIO_Port, BIT2_Pin, SET);
+}
+
+void setGreen1() {
+    HAL_GPIO_WritePin(BIT1_GPIO_Port, BIT1_Pin, RESET);
+    HAL_GPIO_WritePin(BIT2_GPIO_Port, BIT2_Pin, SET);
+}
+
+void setAmber1() {
+    HAL_GPIO_WritePin(BIT1_GPIO_Port, BIT1_Pin, SET);
+    HAL_GPIO_WritePin(BIT2_GPIO_Port, BIT2_Pin, RESET);
+}
+void setRed2() {
+//    HAL_GPIO_WritePin(BIT1_GPIO_Port, BIT1_Pin, RESET);
+//    HAL_GPIO_WritePin(BIT2_GPIO_Port, BIT2_Pin, RESET);
+}
+
+void setGreen2() {
+//    HAL_GPIO_WritePin(BIT1_GPIO_Port, BIT1_Pin, RESET);
+//    HAL_GPIO_WritePin(BIT2_GPIO_Port, BIT2_Pin, SET);
+}
+
+void setAmber2() {
+//    HAL_GPIO_WritePin(BIT1_GPIO_Port, BIT1_Pin, SET);
+//    HAL_GPIO_WritePin(BIT2_GPIO_Port, BIT2_Pin, RESET);
+}
 
 static void setNormalLedsForMode1(){
-    HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, RESET);
-    HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, SET);
-    HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, SET);
+    setRed1();
 
-    HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, SET);
-    HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, SET);
-    HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, RESET);
+    setGreen2();
 }
 
 
 static void enterManualStep(int step){
     if (step == 1){
         // Lane1 GREEN
-        HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, SET);
-        HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, SET);
-        HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, RESET);
+
+		setGreen1();
 
         // Lane2 RED
-        HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, RESET);
-        HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, SET);
-        HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, SET);
+        setRed2();
     }
     else if (step == 2){
         // Lane1 RED
-        HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, RESET);
-        HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, SET);
-        HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, SET);
+
+        setRed1();
 
         // Lane2 GREEN
-        HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, SET);
-        HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, SET);
-        HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, RESET);
+
+        setGreen2();
+
     }
     else if (step == 3){
         // Both AMBER (steady)
-        HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, SET);
-        HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, RESET);
-        HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, SET);
+        setAmber1();
 
-        HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, SET);
-        HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, RESET);
-        HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, SET);
+        setAmber2();
     }
 }
 
 void enterManualMode(){
     // previous semantics (Lane1 RED, Lane2 GREEN)
-    HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, RESET);
-    HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, SET);
-    HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, SET);
+    setRed1();
 
-    HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, SET);
-    HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, SET);
-    HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, RESET);
+    setGreen2();
 }
 
 void fsm_traffic_light(){
+
     switch(status){
 
     // INIT
@@ -110,16 +162,14 @@ void fsm_traffic_light(){
             break;
         }
 
-        if (isButtonPressed(3) == 1){
-             status = RED_AMBER;        // Chuyển trạng thái kế tiếp
-             setTimer(0, AMBER * 1000); // Cài đặt thời gian cho đèn Vàng
-             updateLedBufferMode1();    // Cập nhật hiển thị (tùy chọn)
-             setTimer(1, 1000);         // Reset bộ đếm giây
-        }
-        HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, RESET);
-        HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, SET);
-        HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, SET);
-        HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, RESET);
+//        if (isButtonPressed(3) == 1){
+//             status = RED_AMBER;        // Chuyển trạng thái kế tiếp
+//             setTimer(0, AMBER * 1000); // Cài đặt thời gian cho đèn Vàng
+//             updateLedBufferMode1();    // Cập nhật hiển thị (tùy chọn)
+//             setTimer(1, 1000);         // Reset bộ đếm giây
+//        }
+        setRed1();
+        setGreen2();
 
         if (timer_flag[0] == 1){
             status = RED_AMBER;
@@ -130,7 +180,6 @@ void fsm_traffic_light(){
             setTimer(1, 1000);
         }
         if (timer_flag[2] == 1){
-            update7SEG(index_led);
             setTimer(2, 250);
         }
 
@@ -149,19 +198,16 @@ void fsm_traffic_light(){
             break;
         }
 
-        HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, SET);
-        HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, RESET);
+        setAmber2();
 
         if (timer_flag[0] == 1){
             status = GREEN_RED;
             setTimer(0, GREEN * 1000);
         }
         if (timer_flag[1] == 1){
-            updateLedBufferMode1();
             setTimer(1, 1000);
         }
         if (timer_flag[2] == 1){
-            update7SEG(index_led);
             setTimer(2, 250);
         }
 
@@ -182,28 +228,36 @@ void fsm_traffic_light(){
         }
 
         // Nếu bấm nút đi bộ khi đang Xanh, chuyển ngay sang Vàng
-        if (isButtonPressed(3) == 1){
-             status = AMBER_RED;        // Chuyển trạng thái kế tiếp
-             setTimer(0, AMBER * 1000); // Cài đặt thời gian cho đèn Vàng
-             updateLedBufferMode1();
-             setTimer(1, 1000);
-        }
+//        if (isButtonPressed(3) == 1){
+//             status = AMBER_RED;        // Chuyển trạng thái kế tiếp
+//             setTimer(0, AMBER * 1000); // Cài đặt thời gian cho đèn Vàng
+//             updateLedBufferMode1();
+//             setTimer(1, 1000);
+//        }
         // Set up LED
-        HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, SET);
-        HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, RESET);
-        HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, SET);
-        HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, RESET);
+
+        if(!perdestrian && !preper) {
+        	setGreen1();
+        }
+        	else {
+        		if(preper){
+        		setAmber1();
+        	}
+        		if(perdestrian){
+        		       setRed1();
+        	 		}
+        	}
+        setRed2();
 
         if (timer_flag[0] == 1){
             status = AMBER_RED;
             setTimer(0, AMBER * 1000);
         }
         if (timer_flag[1] == 1){
-            updateLedBufferMode1();
+
             setTimer(1, 1000);
         }
         if (timer_flag[2] == 1){
-            update7SEG(index_led);
             setTimer(2, 250);
         }
 
@@ -224,19 +278,22 @@ void fsm_traffic_light(){
         }
 
         // Set up LED
-        HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, RESET);
-        HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, SET);
+        if(!perdestrian){
+        	setAmber1();
+        }
+        else{
+        	setRed1();
+        }
+        setGreen2();
 
         if (timer_flag[0] == 1){
             status = RED_GREEN;
             setTimer(0, GREEN * 1000);
         }
         if (timer_flag[1] == 1){
-            updateLedBufferMode1();
             setTimer(1, 1000);
         }
         if (timer_flag[2] == 1){
-            update7SEG(index_led);
             setTimer(2, 250);
         }
 
@@ -278,15 +335,10 @@ void fsm_traffic_light(){
     case MODE2:
         status = AUTO_RED;
         //Set up RED LED
-        HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, RESET);
-        HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, SET);
-        HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, SET);
-        HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, RESET);
-        HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, SET);
-        HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, SET);
+        setRed1();
+        setRed2();
 
         index_led = 0;
-        updateLedBufferMode2();
         update7SEG(index_led);
 
         setTimer(2, 250);            // Set timer for 7SEG LED
@@ -296,14 +348,15 @@ void fsm_traffic_light(){
         break;
 
     case AUTO_RED:
+        setRed1();
+        setRed2();
         if (timer_flag[2] == 1){
-            updateLedBufferMode2();
             update7SEG(index_led);
             setTimer(2, 250);
         }
         if (timer_flag[3] == 1){
-            HAL_GPIO_TogglePin(R1_GPIO_Port, R1_Pin);
-            HAL_GPIO_TogglePin(R2_GPIO_Port, R2_Pin);
+//            HAL_GPIO_TogglePin(R1_GPIO_Port, R1_Pin);
+//            HAL_GPIO_TogglePin(R2_GPIO_Port, R2_Pin);
             setTimer(3, 250);
         }
         if (isButtonPressed(0) == 1){
@@ -318,13 +371,11 @@ void fsm_traffic_light(){
 
     case INC_RED:
         if (timer_flag[2] == 1){
-            updateLedBufferMode2();
-            update7SEG(index_led);
             setTimer(2, 250);
         }
         if (timer_flag[3] == 1){
-            HAL_GPIO_TogglePin(R1_GPIO_Port, R1_Pin);
-            HAL_GPIO_TogglePin(R2_GPIO_Port, R2_Pin);
+//            HAL_GPIO_TogglePin(R1_GPIO_Port, R1_Pin);
+//            HAL_GPIO_TogglePin(R2_GPIO_Port, R2_Pin);
             setTimer(3, 250);
         }
         if (isButtonPressed(1) == 1){
@@ -342,16 +393,8 @@ void fsm_traffic_light(){
     case MODE3:
         status = AUTO_AMBER;
         //Set up AMBER LED
-        HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, SET);
-        HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, RESET);
-        HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, SET);
-        HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, SET);
-        HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, RESET);
-        HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, SET);
-
-        index_led = 0;
-        updateLedBufferMode3();
-        update7SEG(index_led);
+        setAmber1();
+        setAmber2();
 
         setTimer(2, 250);            // Set timer for 7SEG LED
         setTimer(3, 500);            // Set timer for blinking LED
@@ -361,13 +404,11 @@ void fsm_traffic_light(){
 
     case AUTO_AMBER:
         if (timer_flag[2] == 1){
-            updateLedBufferMode3();
-            update7SEG(index_led);
             setTimer(2, 250);
         }
         if (timer_flag[3] == 1){
-            HAL_GPIO_TogglePin(A1_GPIO_Port, A1_Pin);
-            HAL_GPIO_TogglePin(A2_GPIO_Port, A2_Pin);
+//            HAL_GPIO_TogglePin(A1_GPIO_Port, A1_Pin);
+//            HAL_GPIO_TogglePin(A2_GPIO_Port, A2_Pin);
             setTimer(3, 250);
         }
         if (isButtonPressed(0) == 1){
@@ -382,13 +423,11 @@ void fsm_traffic_light(){
 
     case INC_AMBER:
         if (timer_flag[2] == 1){
-            updateLedBufferMode3();
-            update7SEG(index_led);
             setTimer(2, 250);
         }
         if (timer_flag[3] == 1){
-            HAL_GPIO_TogglePin(A1_GPIO_Port, A1_Pin);
-            HAL_GPIO_TogglePin(A2_GPIO_Port, A2_Pin);
+//            HAL_GPIO_TogglePin(A1_GPIO_Port, A1_Pin);
+//            HAL_GPIO_TogglePin(A2_GPIO_Port, A2_Pin);
             setTimer(3, 250);
         }
         if (isButtonPressed(1) == 1){
@@ -406,16 +445,8 @@ void fsm_traffic_light(){
     case MODE4:
         status = AUTO_GREEN;
         //Set up GREEN LED
-        HAL_GPIO_WritePin(R1_GPIO_Port, R1_Pin, SET);
-        HAL_GPIO_WritePin(A1_GPIO_Port, A1_Pin, SET);
-        HAL_GPIO_WritePin(G1_GPIO_Port, G1_Pin, RESET);
-        HAL_GPIO_WritePin(R2_GPIO_Port, R2_Pin, SET);
-        HAL_GPIO_WritePin(A2_GPIO_Port, A2_Pin, SET);
-        HAL_GPIO_WritePin(G2_GPIO_Port, G2_Pin, RESET);
-
-        index_led = 0;
-        updateLedBufferMode4();
-        update7SEG(index_led);
+        setGreen1();
+        setGreen2();
 
         setTimer(2, 250);            // Set timer for 7SEG LED
         setTimer(3, 500);            // Set timer for blinking LED
@@ -425,18 +456,16 @@ void fsm_traffic_light(){
 
     case AUTO_GREEN:
         if (timer_flag[2] == 1){
-            updateLedBufferMode4();
-            update7SEG(index_led);
             setTimer(2, 250);
         }
         if (timer_flag[3] == 1){
-            HAL_GPIO_TogglePin(G1_GPIO_Port, G1_Pin);
-            HAL_GPIO_TogglePin(G2_GPIO_Port, G2_Pin);
+//            HAL_GPIO_TogglePin(G1_GPIO_Port, G1_Pin);
+//            HAL_GPIO_TogglePin(G2_GPIO_Port, G2_Pin);
             setTimer(3, 250);
         }
         if (isButtonPressed(0) == 1){
             status = MODE1;
-            if (GREEN <= AMBER) GREEN = AMBER + 1;
+if (GREEN <= AMBER) GREEN = AMBER + 1;
             RED = GREEN + AMBER;
         }
         if (isButtonPressed(1) == 1){
@@ -448,13 +477,11 @@ void fsm_traffic_light(){
 
     case INC_GREEN:
         if (timer_flag[2] == 1){
-            updateLedBufferMode4();
-            update7SEG(index_led);
             setTimer(2, 250);
         }
         if (timer_flag[3] == 1){
-            HAL_GPIO_TogglePin(G1_GPIO_Port, G1_Pin);
-            HAL_GPIO_TogglePin(G2_GPIO_Port, G2_Pin);
+//            HAL_GPIO_TogglePin(G1_GPIO_Port, G1_Pin);
+//            HAL_GPIO_TogglePin(G2_GPIO_Port, G2_Pin);
             setTimer(3, 250);
         }
         if (isButtonPressed(1) == 1){

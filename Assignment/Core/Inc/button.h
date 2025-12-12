@@ -18,4 +18,10 @@
 int isButtonPressed(int index);
 void getKeyInput();
 
+
+void toggleButton0();
+void toggleButton1();
+void toggleButton2();
+void toggleButton3();
+
 #endif /* INC_BUTTON_H_ */

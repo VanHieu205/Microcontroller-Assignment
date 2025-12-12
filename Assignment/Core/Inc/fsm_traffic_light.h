@@ -16,4 +16,6 @@
 
 void fsm_traffic_light();
 
+void fsm_perdes();
+
 #endif /* INC_FSM_TRAFFIC_LIGHT_H_ */

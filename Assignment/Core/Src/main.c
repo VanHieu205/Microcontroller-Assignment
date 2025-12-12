@@ -61,25 +61,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void toggleRed(){
-	HAL_GPIO_TogglePin(R1_GPIO_Port, R1_Pin);
-}
 
-void toggleYellow(){
-	HAL_GPIO_TogglePin(A1_GPIO_Port, A1_Pin);
-}
-
-void toggleGreen(){
-	HAL_GPIO_TogglePin(G1_GPIO_Port, G1_Pin);
-}
-
-void toggleBlue(){
-	HAL_GPIO_TogglePin(R2_GPIO_Port, R2_Pin);
-}
-
-void togglePink(){
-	HAL_GPIO_TogglePin(A2_GPIO_Port, A2_Pin);
-}
 /* USER CODE END 0 */
 
 /**
@@ -114,12 +96,22 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT (& htim2);
   SCH_INIT();
-        SCH_Add_Task(timerRun,5,1);
+       SCH_Add_Task(timerRun,5,1);
         SCH_Add_Task(getKeyInput,10,1);
-//        SCH_Add_Task(toggleRed,4,100);
-//        SCH_Add_Task(toggleYellow,3,100);
-//        SCH_Add_Task(toggleGreen,1,100);
-//        SCH_Add_Task(togglePink,2,100);
+//set red 5+2
+        SCH_Add_Task(toggleButton0, 151, 0);
+        SCH_Add_Task(toggleButton1, 152, 0);
+        SCH_Add_Task(toggleButton1, 153, 0);
+        //auto amber
+        SCH_Add_Task(toggleButton2, 154, 0);
+        SCH_Add_Task(toggleButton0, 155, 0);
+        //auto green
+        SCH_Add_Task(toggleButton0, 156, 0);
+//set green 4
+        SCH_Add_Task(toggleButton1, 157, 0);
+        SCH_Add_Task(toggleButton2, 158, 0);
+ //nomal red = 4 + 2
+        SCH_Add_Task(toggleButton0, 159, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -131,6 +123,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  SCH_Dispatcher();
 	  fsm_traffic_light();
+    fsm_perdes();
   }
   /* USER CODE END 3 */
 }
