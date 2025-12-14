@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2025 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -23,11 +23,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "button.h"
-#include "display7SEG.h"
 #include "fsm_traffic_light.h"
 #include "global.h"
 #include "software_timer.h"
-#include "sched.h"
+#include "i2c-lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +44,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c1;
+
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
@@ -55,6 +56,7 @@ TIM_HandleTypeDef htim2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -93,37 +95,40 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT (& htim2);
-  SCH_INIT();
-       SCH_Add_Task(timerRun,5,1);
-        SCH_Add_Task(getKeyInput,10,1);
-//set red 5+2
-        SCH_Add_Task(toggleButton0, 151, 0);
-        SCH_Add_Task(toggleButton1, 152, 0);
-        SCH_Add_Task(toggleButton1, 153, 0);
-        //auto amber
-        SCH_Add_Task(toggleButton2, 154, 0);
-        SCH_Add_Task(toggleButton0, 155, 0);
-        //auto green
-        SCH_Add_Task(toggleButton0, 156, 0);
-//set green 4
-        SCH_Add_Task(toggleButton1, 157, 0);
-        SCH_Add_Task(toggleButton2, 158, 0);
- //nomal red = 4 + 2
-        SCH_Add_Task(toggleButton0, 159, 0);
+  lcd_init();
+    lcd_clear_display();
+    lcd_goto_XY(0, 0);
+    lcd_send_string(" Xin chao VXL");
+    lcd_goto_XY(1, 0);
+    lcd_send_string(" Vi xu ly");
+  //	  SCH_INIT();
+  //	        SCH_Add_Task(timerRun,5,1);
+  //	        SCH_Add_Task(getKeyInput,10,1);
+  //	        setTime();
+  //        SCH_Add_Task(toggleRed,4,100);
+  //        SCH_Add_Task(toggleYellow,3,100);
+  //        SCH_Add_Task(toggleGreen,1,100);
+  //        SCH_Add_Task(toggleButton1, 50, 0);
+  //        SCH_Add_Task(toggleButton1, 51, 0);
+  //        SCH_Add_Task(toggleButton1, 52, 0);
+  //      SCH_Add_Task(toggleButton3, 500, 500);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  SCH_Dispatcher();
-	  fsm_traffic_light();
-    fsm_perdes();
+	  //	  SCH_Dispatcher();
+	  	  fsm_traffic_light();
+	  	  updateLCD();
+	  //	  fsm_perdes();
   }
   /* USER CODE END 3 */
 }
@@ -161,6 +166,40 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
 }
 
 /**
@@ -203,7 +242,7 @@ static void MX_TIM2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM2_Init 2 */
-
+  TIME_CYCLE = 1/(8e6/(htim2.Init.Prescaler + 1)/(htim2.Init.Period + 1)) * 1000;
   /* USER CODE END TIM2_Init 2 */
 
 }
@@ -218,51 +257,38 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, EN0_Pin|EN1_Pin|EN2_Pin|EN3_Pin
-                          |R1_Pin|A1_Pin|G1_Pin|R2_Pin
-                          |A2_Pin|G2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, BIT3_Pin|BIT2_Pin|BIT4_Pin|BIT1_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, SEG0_Pin|SEG1_Pin|SEG2_Pin|SEG3_Pin
-                          |SEG4_Pin|SEG5_Pin|SEG6_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : BTN4_Pin BTN1_Pin BTN2_Pin BTN3_Pin */
-  GPIO_InitStruct.Pin = BTN4_Pin|BTN1_Pin|BTN2_Pin|BTN3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : EN0_Pin EN1_Pin EN2_Pin EN3_Pin
-                           R1_Pin A1_Pin G1_Pin R2_Pin
-                           A2_Pin G2_Pin */
-  GPIO_InitStruct.Pin = EN0_Pin|EN1_Pin|EN2_Pin|EN3_Pin
-                          |R1_Pin|A1_Pin|G1_Pin|R2_Pin
-                          |A2_Pin|G2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : SEG0_Pin SEG1_Pin SEG2_Pin SEG3_Pin
-                           SEG4_Pin SEG5_Pin SEG6_Pin */
-  GPIO_InitStruct.Pin = SEG0_Pin|SEG1_Pin|SEG2_Pin|SEG3_Pin
-                          |SEG4_Pin|SEG5_Pin|SEG6_Pin;
+  /*Configure GPIO pins : BIT3_Pin BIT2_Pin BIT4_Pin BIT1_Pin */
+  GPIO_InitStruct.Pin = BIT3_Pin|BIT2_Pin|BIT4_Pin|BIT1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : BTN1_Pin BTN2_Pin */
+  GPIO_InitStruct.Pin = BTN1_Pin|BTN2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : BTN3_Pin BTN4_Pin */
+  GPIO_InitStruct.Pin = BTN3_Pin|BTN4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
 }
 
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef * htim){
-//	timerRun();
-//	getKeyInput();
-	SCH_Update();
+	timerRun();
+	getKeyInput();
+//	SCH_Update();
 }
 /* USER CODE END 4 */
 

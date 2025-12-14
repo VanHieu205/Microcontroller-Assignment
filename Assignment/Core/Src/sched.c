@@ -113,8 +113,6 @@ unsigned char SCH_Add_Task(void (*func_ptr)(), unsigned int DELAY,
 void SCH_Dispatcher(){
 	while (Tlist.size != 0 && Tlist.head -> Delay == 0){
 		uint32_t timeOut = timestamp;
-		//sprintf(str, "TaskID: %ld timeout at: %ld ms\r\n", Tlist.head->TaskID,timeOut);
-		//displayMSG(str);
 		(*Tlist.head->Task_ptr)();
 		if (Tlist.head->Period) SCH_Add_Task(Tlist.head->Task_ptr, Tlist.head->Period,Tlist.head->Period);
 		SCH_Delete_Task(Tlist.head->TaskID);
@@ -122,6 +120,35 @@ void SCH_Dispatcher(){
 	SCH_Report_Status();
 }
 
+
+
+void setTime(){
+
+	        SCH_Add_Task(toggleButton0, timeset_traffic++, 0);
+	        if(TimeRED) {
+	        	for(int i = 0; i < TimeRED; i++)SCH_Add_Task(toggleButton1, timeset_traffic++, 0);
+
+				SCH_Add_Task(toggleButton2, timeset_traffic++, 0);
+	        }
+
+	        SCH_Add_Task(toggleButton0, timeset_traffic++, 0);
+
+	        if(TimeAmber) {
+	        	for(int i = 0; i < TimeAmber; i++)SCH_Add_Task(toggleButton1, timeset_traffic++, 0);
+	        	SCH_Add_Task(toggleButton2, timeset_traffic++, 0);
+	         }
+
+	        SCH_Add_Task(toggleButton0, timeset_traffic++, 0);
+
+	        if(TimeGreen) {
+
+	        	for(int i = 0; i < TimeGreen; i++) SCH_Add_Task(toggleButton1, timeset_traffic++, 0);
+	           	SCH_Add_Task(toggleButton2, timeset_traffic++, 0);
+	           }
+
+	        SCH_Add_Task(toggleButton0, 159, 0);
+
+}
 int errorCounter = 0;
 void SCH_Report_Status(){
 #ifdef REPORT_ERROR

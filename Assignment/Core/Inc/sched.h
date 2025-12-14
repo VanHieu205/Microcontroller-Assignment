@@ -11,7 +11,7 @@
 
 #include "global.h"
 #include <stdlib.h>
-
+#include "button.h"
 
 #define SCH_MAX_TASKS 30
 
@@ -52,6 +52,10 @@ unsigned char SCH_Add_Task(
 		unsigned int PERIOD
 );
 RETURN_CODE SCH_Delete_Task(const unsigned char TaskID);
+
+//===SET_TIME_FOR_TRAFFIC_LIGHT===
+
+void setTime();
 
 //=== Status_Report ===
 void SCH_Report_Status();

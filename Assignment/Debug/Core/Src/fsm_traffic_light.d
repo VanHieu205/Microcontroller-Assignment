@@ -22,10 +22,11 @@ Core/Src/fsm_traffic_light.o: ../Core/Src/fsm_traffic_light.c \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
+ ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- ../Core/Inc/software_timer.h ../Core/Inc/display7SEG.h
+ ../Core/Inc/software_timer.h ../Core/Inc/i2c-lcd.h
 
 ../Core/Inc/fsm_traffic_light.h:
 
@@ -77,6 +78,8 @@ Core/Src/fsm_traffic_light.o: ../Core/Src/fsm_traffic_light.c \
 
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h:
 
+../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h:
+
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
@@ -85,4 +88,4 @@ Core/Src/fsm_traffic_light.o: ../Core/Src/fsm_traffic_light.c \
 
 ../Core/Inc/software_timer.h:
 
-../Core/Inc/display7SEG.h:
+../Core/Inc/i2c-lcd.h:

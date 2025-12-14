@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2023 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -58,48 +58,22 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BTN4_Pin GPIO_PIN_1
-#define BTN4_GPIO_Port GPIOA
-#define BTN1_Pin GPIO_PIN_3
-#define BTN1_GPIO_Port GPIOA
-#define BTN2_Pin GPIO_PIN_4
-#define BTN2_GPIO_Port GPIOA
-#define BTN3_Pin GPIO_PIN_5
+#define BIT3_Pin GPIO_PIN_10
+#define BIT3_GPIO_Port GPIOB
+#define BTN1_Pin GPIO_PIN_15
+#define BTN1_GPIO_Port GPIOB
+#define BTN3_Pin GPIO_PIN_8
 #define BTN3_GPIO_Port GPIOA
-#define EN0_Pin GPIO_PIN_6
-#define EN0_GPIO_Port GPIOA
-#define EN1_Pin GPIO_PIN_7
-#define EN1_GPIO_Port GPIOA
-#define SEG0_Pin GPIO_PIN_0
-#define SEG0_GPIO_Port GPIOB
-#define SEG1_Pin GPIO_PIN_1
-#define SEG1_GPIO_Port GPIOB
-#define SEG2_Pin GPIO_PIN_2
-#define SEG2_GPIO_Port GPIOB
-#define EN2_Pin GPIO_PIN_8
-#define EN2_GPIO_Port GPIOA
-#define EN3_Pin GPIO_PIN_9
-#define EN3_GPIO_Port GPIOA
-#define R1_Pin GPIO_PIN_10
-#define R1_GPIO_Port GPIOA
-#define A1_Pin GPIO_PIN_11
-#define A1_GPIO_Port GPIOA
-#define G1_Pin GPIO_PIN_12
-#define G1_GPIO_Port GPIOA
-#define R2_Pin GPIO_PIN_13
-#define R2_GPIO_Port GPIOA
-#define A2_Pin GPIO_PIN_14
-#define A2_GPIO_Port GPIOA
-#define G2_Pin GPIO_PIN_15
-#define G2_GPIO_Port GPIOA
-#define SEG3_Pin GPIO_PIN_3
-#define SEG3_GPIO_Port GPIOB
-#define SEG4_Pin GPIO_PIN_4
-#define SEG4_GPIO_Port GPIOB
-#define SEG5_Pin GPIO_PIN_5
-#define SEG5_GPIO_Port GPIOB
-#define SEG6_Pin GPIO_PIN_6
-#define SEG6_GPIO_Port GPIOB
+#define BTN4_Pin GPIO_PIN_9
+#define BTN4_GPIO_Port GPIOA
+#define BIT2_Pin GPIO_PIN_3
+#define BIT2_GPIO_Port GPIOB
+#define BIT4_Pin GPIO_PIN_4
+#define BIT4_GPIO_Port GPIOB
+#define BIT1_Pin GPIO_PIN_5
+#define BIT1_GPIO_Port GPIOB
+#define BTN2_Pin GPIO_PIN_6
+#define BTN2_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

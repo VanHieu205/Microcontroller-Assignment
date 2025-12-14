@@ -8,7 +8,7 @@
 #ifndef INC_SOFTWARE_TIMER_H_
 #define INC_SOFTWARE_TIMER_H_
 
-#define NUM_OF_TIMERS 			4
+#define NUM_OF_TIMERS 			6
 
 extern int TIME_CYCLE;
 

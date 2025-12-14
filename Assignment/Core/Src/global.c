@@ -17,3 +17,6 @@ int GREEN = 3;
 
 uint32_t timestamp = 0;
 
+int TimeRED = 4, TimeAmber = 0, TimeGreen = 1;
+int timeset_traffic = 150;
+

@@ -1,14 +1,16 @@
 /*
  * global.h
  *
- *  Created on: OCT 26, 2025
- *
+ *  Created on: Dec 11, 2025
+ *      Author: LENOVO
  */
 
 #ifndef INC_GLOBAL_H_
 #define INC_GLOBAL_H_
 
 #include "stdint.h"
+#include <stdbool.h>
+
 //========================
 // SYSTEM STATES
 //========================
@@ -54,5 +56,10 @@ extern int AMBER;
 extern int GREEN;
 extern int pedestrian_request;
 
+
 extern uint32_t timestamp;
+
+extern int TimeRED, TimeAmber, TimeGreen;
+extern int timeset_traffic;
+
 #endif /* INC_GLOBAL_H_ */
